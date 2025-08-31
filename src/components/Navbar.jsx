@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import logo from "../assets/itbu-logo.jpg";
+import AdmissionOpenTicker from "./AdmissionOpenTicker";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur border-b border-black/5">
+<AdmissionOpenTicker />
+
   <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
     <div className="flex items-center gap-3">
       {/* Logo */}
@@ -41,11 +44,11 @@ export default function Navbar() {
       {/* Mobile Dropdown */}
       {open && (
         <div className="md:hidden bg-white/95 backdrop-blur border-t border-gray-200 px-4 py-4 space-y-4">
-          <a href="#home" className="block hover:text-blue-600">Home</a>
+          <a href="/" className="block hover:text-blue-600">Home</a>
           <a href="#institutions" className="block hover:text-blue-600">Institutions</a>
           <a href="#stats" className="block hover:text-blue-600">Stats</a>
           <a href="#contact" className="block hover:text-blue-600">Contact</a>
-          <a href="/result" className="block rounded-lg bg-blue-600 text-white px-4 py-2 text-center font-semibold hover:bg-blue-700">
+          <a href="/result"  className="block rounded-lg bg-blue-600 text-white px-4 py-2 text-center font-semibold hover:bg-blue-700">
             Check Results
           </a>
         </div>

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SectionHeading from "../components/SectionHeading";
+import AdmissionOpenTicker from "../components/AdmissionOpenTicker";
+import CoursesSection from "../components/CoursesSection";
 
 export default function Landing() {
   const nav = useNavigate();
@@ -58,7 +60,6 @@ export default function Landing() {
   return (
     <div className="font-sans relative overflow-hidden">
       <Navbar/>
-
       {/* Floating Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <motion.div
@@ -72,9 +73,16 @@ export default function Landing() {
       </div>
 
       {/* HERO */}
-      <section id="home" className="relative min-h-screen bg-center bg-cover flex items-center"
-        style={{backgroundImage:"url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1950&q=80')"}}>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/50"></div>
+     <section
+  id="home"
+  className="relative min-h-screen bg-center bg-cover flex items-center"
+  style={{
+    backgroundImage:
+      "url('https://mbastudiespk.wordpress.com/wp-content/uploads/2016/04/picture1.jpg?w=500')",
+  }}
+>
+  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/50"></div>
+
 
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full text-center">
        
@@ -101,7 +109,7 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
+  <CoursesSection/>
       {/* FEATURES */}
       <section className="py-16 sm:py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
