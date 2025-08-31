@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { GraduationCap, BookOpen } from "lucide-react";
+import girlImage from '../assets/girl.jpg'
 
 const courses = [
   { name: "BBA", duration: "2/4 Years" },
@@ -10,14 +11,16 @@ const courses = [
   { name: "MBA", duration: "2/4 Years" },
   { name: "B.Sc", duration: "2/4 Years" },
   { name: "M.A", duration: "2/4 Years" },
+  { name: 'BSCS', duration: "2/4 Years" },
+  { name: 'Ph.d social science', duration: "1.5 Years" },
+  
 ];
 
 export default function CoursesSection() {
   return (
-    <section className="relative w-full px-6 lg:px-20 py-24 bg-gradient-to-br from-blue-50 via-white to-sky-50">
+    <section id="course" className="relative w-full px-6 lg:px-20 py-24 bg-gradient-to-br from-blue-50 via-white to-sky-50">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
         
-        {/* Left: Student Image */}
         <motion.div
           initial={{ opacity: 0, x: -60 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -27,11 +30,10 @@ export default function CoursesSection() {
         >
           <div className="relative">
             <img
-              src="https://media.istockphoto.com/id/138017387/photo/asian-college-student.jpg?s=612x612&w=0&k=20&c=2UDa5P72h-2TbvhJ5btBRpLw1lxr81t9n-ISCJFwaLs="
+              src={girlImage}
               alt="Student with books"
               className="rounded-3xl shadow-2xl max-h-[600px] object-cover"
             />
-            {/* Decorative blue glow */}
             <div className="absolute -inset-6 rounded-3xl bg-gradient-to-r from-sky-400 to-blue-500 blur-3xl opacity-30 -z-10"></div>
           </div>
         </motion.div>
@@ -51,7 +53,6 @@ export default function CoursesSection() {
             </span>
           </motion.h2>
 
-          {/* Floating Grid of Cards */}
           <div className="grid sm:grid-cols-2 gap-8">
             {courses.map((course, index) => (
               <motion.div

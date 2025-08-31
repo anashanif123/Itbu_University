@@ -98,7 +98,7 @@ const socialLinks = [
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div id="contact">
             <h4 className="text-white font-bold text-lg mb-6 relative">
               Contact Info
               <span className="absolute -bottom-2 left-0 w-12 h-0.5 bg-blue-500"></span>
