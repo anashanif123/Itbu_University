@@ -41,6 +41,13 @@ export default function Landing() {
       icon: "📚",
       color: "from-blue-600 to-blue-800"
     },
+       {
+      name: "College",
+      img: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80",
+      description: "Higher education with diverse courses and career opportunities",
+      icon: "🎓",
+      color: "from-blue-600 to-blue-800"
+    },
   ];
 
   const stats = [
@@ -141,30 +148,36 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
-      {/* INSTITUTIONS */}
-      <section id="institutions" className="py-16 sm:py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <SectionHeading title="Select Your Stream" subtitle="Madrasa • School • Coaching" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {cards.map((card, i) => (
-              <div key={i} onClick={()=>nav("/result")} className="cursor-pointer bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl border border-gray-100">
-                <div className="relative h-52 sm:h-64 lg:h-72">
-                  <img src={card.img} alt={card.name} className="h-full w-full object-cover"/>
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-4xl">{card.icon}</div>
-                </div>
-                <div className="p-6 sm:p-8">
-                  <h3 className="text-lg sm:text-2xl font-bold mb-2">{card.name}</h3>
-                  <p className="text-gray-600 text-sm sm:text-base mb-4">{card.description}</p>
-                  <button className={`w-full py-2 sm:py-3 px-4 rounded-full bg-gradient-to-r ${card.color} text-white font-semibold`}>
-                    Check {card.name} Results
-                  </button>
-                </div>
-              </div>
-            ))}
+{/* INSTITUTIONS */}
+<section id="institutions" className="py-16 sm:py-20 bg-white">
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading title="Select Your Stream" subtitle="Madrasa • School • Coaching • College" />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      {cards.map((card, i) => (
+        <div
+          key={i}
+          onClick={() => nav("/result")}
+          className="cursor-pointer bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl border border-gray-100"
+        >
+          <div className="relative h-52 sm:h-64 lg:h-72">
+            <img src={card.img} alt={card.name} className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-4xl">{card.icon}</div>
+          </div>
+          <div className="p-6 sm:p-8">
+            <h3 className="text-lg sm:text-2xl font-bold mb-2">{card.name}</h3>
+            <p className="text-gray-600 text-sm sm:text-base mb-4">{card.description}</p>
+            <button
+              className={`w-full py-2 sm:py-3 px-4 rounded-full bg-gradient-to-r ${card.color} text-white font-semibold`}
+            >
+              Check {card.name} Results
+            </button>
           </div>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* CTA */}
       <section className="bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 text-white text-center py-16 sm:py-24">

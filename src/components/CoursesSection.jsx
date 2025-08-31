@@ -2,14 +2,14 @@ import { motion } from "framer-motion";
 import { GraduationCap, BookOpen } from "lucide-react";
 
 const courses = [
-  { name: "BBA", duration: "3 Years" },
-  { name: "B.Com", duration: "3 Years" },
-  { name: "B.Ed", duration: "2 Years" },
-  { name: "B.A", duration: "3 Years" },
-  { name: "M.Com", duration: "2 Years" },
-  { name: "MBA", duration: "2 Years" },
-  { name: "B.Sc", duration: "3 Years" },
-  { name: "M.A", duration: "2 Years" },
+  { name: "BBA", duration: "3/4 Years" },
+  { name: "B.Com", duration: "3/4 Years" },
+  { name: "B.Ed", duration: "2/4 Years" },
+  { name: "B.A", duration: "3/4 Years" },
+  { name: "M.Com", duration: "2/4 Years" },
+  { name: "MBA", duration: "2/4 Years" },
+  { name: "B.Sc", duration: "3/4 Years" },
+  { name: "M.A", duration: "2/4 Years" },
 ];
 
 export default function CoursesSection() {

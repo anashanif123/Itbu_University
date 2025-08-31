@@ -23,9 +23,9 @@ const socialLinks = [
   ];
 
   const contactInfo = [
-    { icon: "📧", text: "info@itbu.university" },
-    { icon: "📞", text: "+880 1234-567890" },
-    { icon: "📍", text: "Karachi, Pakistan" },
+    { icon: "📧", text: "universityitbu@gmail.com" },
+    { icon: "📞", text: "+923092163536" },
+    { icon: "📍", text: "Main campus building  korangi No 7 Karachi," },
     { icon: "🕒", text: "Mon-Fri: 9:00 AM - 6:00 PM" },
   ];
 
