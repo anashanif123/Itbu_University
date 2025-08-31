@@ -13,6 +13,8 @@ const courses = [
   { name: "M.A", duration: "2/4 Years" },
   { name: 'BSCS', duration: "2/4 Years" },
   { name: 'Ph.D social science', duration: "1.5 Years" },
+  { name: 'BSCS Software Engineeerring', duration: "2/4 years" },
+  { name: 'Ph.D IT management', duration: "2/4 years" },
   
 ];
 
