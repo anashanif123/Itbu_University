@@ -49,6 +49,8 @@ export default function Navbar() {
           <a href="#institutions" className="block hover:text-blue-600">Institutions</a>
           <a href="#stats" className="block hover:text-blue-600">Stats</a>
           <a href="#contact" className="block hover:text-blue-600">Contact</a>
+          <a href="#course" className="hover:text-blue-600">Course</a>
+
           <a href="/result"  className="block rounded-lg bg-blue-600 text-white px-4 py-2 text-center font-semibold hover:bg-blue-700">
             Check Results
           </a>
