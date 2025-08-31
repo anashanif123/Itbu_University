@@ -6,6 +6,11 @@ import Footer from "../components/Footer";
 import SectionHeading from "../components/SectionHeading";
 import CoursesSection from "../components/CoursesSection";
 import heroImage from "../assets/uni.png";
+import MadrasaCoursesSection from "../components/MadrasaCoursesSection";
+import CoachingCoursesSection from "../components/CoachingCoursesSection";
+import SchoolCoursesSection from "../components/SchoolCoursesSection";
+import CollegeCoursesSection from "../components/CollegeCoursesSection";
+import UniversityCourses from "../components/UniversityCourses";
 
 export default function Landing() {
   const nav = useNavigate();
@@ -157,7 +162,12 @@ export default function Landing() {
           </div>
         </div>
       </section>
-      <CoursesSection />
+      {/* <CoursesSection /> */}
+      <UniversityCourses/>
+      <MadrasaCoursesSection/>
+      <CoachingCoursesSection/>
+      <SchoolCoursesSection/>
+      <CollegeCoursesSection/>
       {/* FEATURES */}
       <section className="py-16 sm:py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

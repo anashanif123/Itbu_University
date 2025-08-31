@@ -136,7 +136,7 @@ const socialLinks = [
 
             {/* Copyright */}
             <div>
-              <p className="text-gray-400 text-sm">© {currentYear} ITBU University. All rights reserved.</p>
+              <p className="text-gray-400 text-sm">© 2010 ITBU University. All rights reserved.</p>
               <p className="text-gray-500 text-xs mt-1">Made with ❤️ for better education</p>
             </div>
           </div>
