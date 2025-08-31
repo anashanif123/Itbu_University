@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SectionHeading from "../components/SectionHeading";
-import logo from "../assets/itbu-logo.jpg";
 
 export default function Landing() {
   const nav = useNavigate();
@@ -63,18 +62,12 @@ export default function Landing() {
       {/* Floating Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <motion.div
-          animate={{
-            x: mousePosition.x * 0.01,
-            y: mousePosition.y * 0.01,
-          }}
-          className="absolute top-20 left-20 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"
+          animate={{ x: mousePosition.x * 0.01, y: mousePosition.y * 0.01 }}
+          className="absolute top-20 left-20 w-24 sm:w-32 h-24 sm:h-32 bg-blue-500/10 rounded-full blur-3xl"
         />
         <motion.div
-          animate={{
-            x: -mousePosition.x * 0.02,
-            y: -mousePosition.y * 0.02,
-          }}
-          className="absolute bottom-20 right-20 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"
+          animate={{ x: -mousePosition.x * 0.02, y: -mousePosition.y * 0.02 }}
+          className="absolute bottom-20 right-20 w-32 sm:w-40 h-32 sm:h-40 bg-blue-500/10 rounded-full blur-3xl"
         />
       </div>
 
@@ -82,291 +75,102 @@ export default function Landing() {
       <section id="home" className="relative min-h-screen bg-center bg-cover flex items-center"
         style={{backgroundImage:"url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1950&q=80')"}}>
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/50"></div>
-        
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-40 -right-40 w-80 h-80 border border-white/10 rounded-full"
-          />
-          <motion.div
-            animate={{ rotate: -360 }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-40 -left-40 w-96 h-96 border border-white/10 rounded-full"
-          />
-        </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6 w-full">
-          <div className="text-center">
-            <motion.div
-              initial={{opacity:0,y:50}} 
-              animate={{opacity:1,y:0}} 
-              transition={{duration:1, ease: "easeOut"}}
-              className="text-white"
-            >
-              {/* Logo with Animation */}
-              <motion.div
-                initial={{scale:0.8, opacity:0}}
-                animate={{scale:1, opacity:1}}
-                transition={{duration:0.8, delay:0.2}}
-                className="mb-8 flex justify-center"
-              >
-                <img src={logo} alt="ITBU" className="h-40 w-40 sm:h-48 sm:w-48 lg:h-56 lg:w-56 object-contain drop-shadow-2xl"/>
-              </motion.div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full text-center">
+       
+          {/* Main Heading */}
+          <motion.h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold leading-tight text-white">
+            Build the Future with{" "}
+            <span className="bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">ITBU</span>
+          </motion.h1>
 
-              {/* Main Heading */}
-              <motion.h1 
-                initial={{opacity:0, y:30}}
-                animate={{opacity:1, y:0}}
-                transition={{duration:0.8, delay:0.4}}
-                className="text-6xl lg:text-7xl font-extrabold leading-tight"
-              >
-                Build the Future with{" "}
-                <span className="bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
-                  ITBU
-                </span>
-              </motion.h1>
+          <motion.p className="text-base sm:text-lg lg:text-xl text-gray-200 mt-4 sm:mt-6 max-w-2xl mx-auto leading-relaxed px-2">
+            Institute of Technology & Business University — Secure & smart online results with cutting-edge technology.
+          </motion.p>
 
-              <motion.p 
-                initial={{opacity:0, y:30}}
-                animate={{opacity:1, y:0}}
-                transition={{duration:0.8, delay:0.6}}
-                className="text-xl text-gray-200 mt-6 max-w-2xl mx-auto leading-relaxed"
-              >
-                Institute of Technology & Business University — Secure & smart online results with cutting-edge technology.
-              </motion.p>
-
-              {/* CTA Buttons */}
-              <motion.div 
-                initial={{opacity:0, y:30}}
-                animate={{opacity:1, y:0}}
-                transition={{duration:0.8, delay:0.8}}
-                className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
-              >
-                <button 
-                  onClick={()=>nav("/result")}
-                  className="group relative px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold text-lg shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-1"
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    🚀 Check Results
-                    <motion.span
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    >
-                      →
-                    </motion.span>
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-800 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </button>
-                
-                <a href="#institutions"
-                  className="px-8 py-4 rounded-full border-2 border-white text-white hover:bg-white hover:text-black font-semibold text-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
-                  📖 Explore Streams
-                </a>
-              </motion.div>
-
-              {/* Trust Indicators */}
-              <motion.div 
-                initial={{opacity:0, y:30}}
-                animate={{opacity:1, y:0}}
-                transition={{duration:0.8, delay:1}}
-                className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-gray-300"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>100% Secure</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                  <span>Instant Results</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                  <span>24/7 Available</span>
-                </div>
-              </motion.div>
-            </motion.div>
+          {/* CTA Buttons */}
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-4 justify-center px-2">
+            <button onClick={()=>nav("/result")}
+              className="px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold hover:from-blue-700 hover:to-blue-800 transition transform hover:-translate-y-1 shadow-lg">
+              🚀 Check Results
+            </button>
+            <a href="#institutions"
+              className="px-6 sm:px-8 py-3 sm:py-4 rounded-full border-2 border-white text-white hover:bg-white hover:text-black font-semibold transition transform hover:-translate-y-1 shadow-lg text-center">
+              📖 Explore Streams
+            </a>
           </div>
         </div>
       </section>
 
       {/* FEATURES */}
-      <section className="py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-6">
-          <motion.div
-            initial={{opacity:0, y:30}}
-            whileInView={{opacity:1, y:0}}
-            viewport={{once:true}}
-            transition={{duration:0.8}}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Why Choose <span className="text-blue-600">ITBU</span>?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Experience the future of result management with our cutting-edge platform
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <section className="py-16 sm:py-20 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading title="Why Choose ITBU?" subtitle="Experience the future of result management with our cutting-edge platform" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{opacity:0, y:30}}
-                whileInView={{opacity:1, y:0}}
-                viewport={{once:true}}
-                transition={{duration:0.6, delay:i*0.1}}
-                className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
-              >
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-              </motion.div>
+              <div key={i} className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 border border-gray-100 text-center">
+                <div className="text-3xl sm:text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-lg sm:text-xl font-bold mb-2">{feature.title}</h3>
+                <p className="text-gray-600 text-sm sm:text-base">{feature.description}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* STATS */}
-      <section id="stats" className="py-20 bg-gray-900">
-        <div className="mx-auto max-w-7xl px-6">
-          <motion.div
-            initial={{opacity:0, y:30}}
-            whileInView={{opacity:1, y:0}}
-            viewport={{once:true}}
-            transition={{duration:0.8}}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
-              Impact in <span className="text-blue-400">Numbers</span>
-            </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Trusted by learners & educators worldwide
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <section id="stats" className="py-16 sm:py-20 bg-gray-900 text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading title="Impact in Numbers" subtitle="Trusted by learners & educators worldwide" />
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {stats.map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{opacity:0, y:30}}
-                whileInView={{opacity:1, y:0}}
-                viewport={{once:true}}  
-                transition={{duration:0.6, delay:i*0.1}}
-                className="text-center group"
-              >
-                <motion.div
-                  whileHover={{scale:1.05}}
-                  className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300"
-                >
-                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                    {stat.icon}
-                  </div>
-                  <div className={`text-4xl lg:text-5xl font-extrabold ${stat.color} mb-2`}>
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-300 text-lg">{stat.label}</div>
-                </motion.div>
-              </motion.div>
+              <div key={i} className="bg-white/10 rounded-2xl p-6 sm:p-8 text-center border border-white/20">
+                <div className="text-3xl sm:text-4xl mb-2">{stat.icon}</div>
+                <div className={`text-2xl sm:text-4xl font-extrabold ${stat.color}`}>{stat.value}</div>
+                <p className="text-sm sm:text-base">{stat.label}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* INSTITUTIONS */}
-      <section id="institutions" className="py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-6">
-          <motion.div
-            initial={{opacity:0, y:30}}
-            whileInView={{opacity:1, y:0}}
-            viewport={{once:true}}
-            transition={{duration:0.8}}
-            className="text-center mb-16"
-          >
-            <SectionHeading title="Select Your Stream" subtitle="Madrasa • School • Coaching" />
-          </motion.div>
-          
-          <div className="grid lg:grid-cols-3 gap-8">
+      <section id="institutions" className="py-16 sm:py-20 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading title="Select Your Stream" subtitle="Madrasa • School • Coaching" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {cards.map((card, i) => (
-              <motion.div
-                key={i}
-                initial={{opacity:0, y:30}}
-                whileInView={{opacity:1, y:0}}
-                viewport={{once:true}}
-                transition={{duration:0.6, delay:i*0.1}}
-                whileHover={{scale:1.02, y:-10}}
-                className="group relative rounded-3xl overflow-hidden shadow-2xl cursor-pointer bg-white border border-gray-100"
-                onClick={()=>nav("/result")}
-              >
-                <div className="relative h-72 overflow-hidden">
-                  <img src={card.img} alt={card.name} className="h-full w-full object-cover group-hover:scale-110 transition duration-700"/>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10"/>
-                  
-                  {/* Floating Icon */}
-                  <div className="absolute top-6 right-6 w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-3xl">
-                    {card.icon}
-                  </div>
+              <div key={i} onClick={()=>nav("/result")} className="cursor-pointer bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl border border-gray-100">
+                <div className="relative h-52 sm:h-64 lg:h-72">
+                  <img src={card.img} alt={card.name} className="h-full w-full object-cover"/>
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-4xl">{card.icon}</div>
                 </div>
-                
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">{card.name}</h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">{card.description}</p>
-                  
-                  <button className={`w-full py-3 px-6 rounded-full bg-gradient-to-r ${card.color} text-white font-semibold hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300`}>
+                <div className="p-6 sm:p-8">
+                  <h3 className="text-lg sm:text-2xl font-bold mb-2">{card.name}</h3>
+                  <p className="text-gray-600 text-sm sm:text-base mb-4">{card.description}</p>
+                  <button className={`w-full py-2 sm:py-3 px-4 rounded-full bg-gradient-to-r ${card.color} text-white font-semibold`}>
                     Check {card.name} Results
                   </button>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 text-white text-center py-24">
-        <div className="mx-auto max-w-4xl px-6">
-          <motion.h2
-            initial={{opacity:0, y:30}}
-            whileInView={{opacity:1, y:0}}
-            viewport={{once:true}}
-            transition={{duration:0.8}}
-            className="text-4xl lg:text-5xl font-bold mb-6"
-          >
+      <section className="bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 text-white text-center py-16 sm:py-24">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             Ready to unlock your result?
-          </motion.h2>
-          
-          <motion.p
-            initial={{opacity:0, y:30}}
-            whileInView={{opacity:1, y:0}}
-            viewport={{once:true}}
-            transition={{duration:0.8, delay:0.2}}
-            className="text-xl text-gray-300 mb-8"
-          >
+          </h2>
+          <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8">
             Fast • Secure • Verified • Instant
-          </motion.p>
-          
-          <motion.button
-            initial={{opacity:0, y:30}}
-            whileInView={{opacity:1, y:0}}
-            viewport={{once:true}}
-            transition={{duration:0.8, delay:0.4}}
-            onClick={()=>nav("/result")}
-            className="group px-12 py-5 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 font-bold text-xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-2"
-          >
-            <span className="flex items-center gap-3">
-              🎓 Check Now
-              <motion.span
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="group-hover:translate-x-2 transition-transform duration-300"
-              >
-                →
-              </motion.span>
-            </span>
-          </motion.button>
+          </p>
+          <button onClick={()=>nav("/result")}
+            className="px-8 sm:px-12 py-3 sm:py-5 rounded-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 font-bold text-lg sm:text-xl shadow-lg">
+            🎓 Check Now →
+          </button>
         </div>
       </section>
 

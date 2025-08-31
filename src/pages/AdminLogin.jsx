@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 
 export default function AdminLogin() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -32,7 +31,6 @@ export default function AdminLogin() {
 
   return (
     <div className="font-sans min-h-screen bg-gray-50">
-      <Navbar />
       
       {/* Hero Section */}
       <section className="pt-24 pb-16 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
@@ -201,7 +199,6 @@ export default function AdminLogin() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }
