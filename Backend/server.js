@@ -71,18 +71,32 @@ app.use(securityHeaders);
 app.use(sanitizeInput);
 
 // CORS configuration
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
+const getAllowedOrigins = () => {
+  const baseOrigins = process.env.NODE_ENV === 'production'
     ? [
+        'https://www.itbu.university',
+        'https://itbu.university',
         'https://itbu-uni.vercel.app',
         'https://itbu-university.vercel.app',
         'https://itbu-university-frontend.vercel.app',
-        /\.vercel\.app$/
+        /\.vercel\.app$/,
+        /\.itbu\.university$/
       ]
     : [
         'http://localhost:3000',
         'http://localhost:5173'
-      ],
+      ];
+
+  // Add custom frontend URL from environment if provided
+  if (process.env.FRONTEND_URL) {
+    baseOrigins.push(process.env.FRONTEND_URL);
+  }
+
+  return baseOrigins;
+};
+
+app.use(cors({
+  origin: getAllowedOrigins(),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
