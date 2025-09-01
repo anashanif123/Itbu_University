@@ -39,13 +39,13 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // ---------------- CORS Configuration ----------------
-const allowedOrigins =
-  NODE_ENV === 'production'
-    ? [
-        'https://itbu-university.vercel.app',
-        'https://your-custom-domain.com', // add custom domain here if needed
-      ]
-    : ['http://localhost:3000', 'http://localhost:5173'];
+const allowedOrigins = (process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim())
+  : [
+      'https://itbu-university.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:3000',
+    ]);
 
 app.use(
   cors({
@@ -57,8 +57,14 @@ app.use(
       }
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204,
   })
 );
+
+// Handle preflight requests
+app.options('*', cors());
 
 // ---------------- Body Parsers ----------------
 app.use(express.json({ limit: '10mb' }));

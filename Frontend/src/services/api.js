@@ -1,5 +1,8 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://itbu-university.onrender.com/';
+const rawBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+const API_BASE_URL = rawBase.replace(/\/?$/, '') // remove trailing slash
+  .replace(/(?<!:)\/\/+/, '/') // collapse accidental double slashes
+  ;
 
 // Helper function to get auth token from localStorage
 const getAuthToken = () => {
@@ -18,7 +21,7 @@ const removeAuthToken = () => {
 
 // Generic API request function
 const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${API_BASE_URL}${endpoint}`.replace(/(?<!:)\/\/+/, '/');
   const token = getAuthToken();
 
   const config = {
@@ -121,7 +124,7 @@ export const certificatesAPI = {
   // Upload certificate
   uploadCertificate: async (formData) => {
     const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/certificates/upload`, {
+    const response = await fetch(`${API_BASE_URL}/certificates/upload`.replace(/(?<!:)\/\/+/, '/'), {
       method: 'POST',
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
