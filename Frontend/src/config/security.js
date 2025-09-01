@@ -84,7 +84,7 @@ export const secureStorage = {
 export const rateLimiter = {
   attempts: new Map(),
   
-  canAttempt: (key, maxAttempts = SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS) => {
+  canAttempt(key, maxAttempts = SECURITY_CONFIG.MAX_LOGIN_ATTEMPTS) {
     const now = Date.now();
     const attempts = this.attempts.get(key) || [];
     
@@ -100,7 +100,7 @@ export const rateLimiter = {
     return true;
   },
   
-  resetAttempts: (key) => {
+  resetAttempts(key) {
     this.attempts.delete(key);
   }
 };
