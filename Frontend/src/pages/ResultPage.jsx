@@ -2,13 +2,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { resultsAPI } from "../services/api";
 
 export default function ResultPage() {
   const [roll, setRoll] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [result, setResult] = useState(null);
 
-  const search = () => {
+  const search = async () => {
     if (!roll.trim()) {
       setMessage("Please enter a roll number");
       return;
@@ -16,12 +18,23 @@ export default function ResultPage() {
     
     setLoading(true);
     setMessage("");
+    setResult(null);
     
-    // Simulate search delay
-    setTimeout(() => {
+    try {
+      const response = await resultsAPI.searchResult(roll.trim());
+      
+      if (response.success && response.data.result) {
+        setResult(response.data.result);
+        setMessage("Result found successfully!");
+      } else {
+        setMessage("No result found for the provided roll number.");
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+      setMessage(error.message || "Search failed. Please try again.");
+    } finally {
       setLoading(false);
-      setMessage("This is a demo version. In a real application, this would search the database for results.");
-    }, 2000);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -93,11 +106,48 @@ export default function ResultPage() {
               <motion.div
                 initial={{opacity:0, y:10}}
                 animate={{opacity:1, y:0}}
-                className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6"
+                className={`border rounded-xl p-4 mb-6 ${
+                  message.includes("successfully") 
+                    ? "bg-green-50 border-green-200 text-green-700" 
+                    : "bg-blue-50 border-blue-200 text-blue-700"
+                }`}
               >
-                <div className="flex items-center gap-2 text-blue-700">
-                  <span className="text-xl">ℹ️</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">
+                    {message.includes("successfully") ? "✅" : "ℹ️"}
+                  </span>
                   <span className="font-medium">{message}</span>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Result Display */}
+            {result && (
+              <motion.div
+                initial={{opacity:0, y:20}}
+                animate={{opacity:1, y:0}}
+                className="bg-white border border-gray-200 rounded-xl p-6 mb-6"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Certificate Found</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Roll Number</label>
+                    <p className="text-lg font-semibold text-gray-900">{result.rollNumber}</p>
+                  </div>
+                  
+                  {result.pdfUrl && (
+                    <div className="pt-4 border-t border-gray-200">
+                      <a
+                        href={result.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                      >
+                        <span>📄</span>
+                        View Certificate PDF
+                      </a>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}

@@ -1,25 +1,33 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
+import { authAPI } from "../services/api";
 
 export default function AdminLogin() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");
 
-  const login = () => {
+  const login = async () => {
     if (!form.username.trim() || !form.password.trim()) {
       setMessage("Please fill in all fields");
       return;
     }
 
-    // Demo login - check for demo credentials
-    if (form.username === "admin" && form.password === "admin123") {
-      setMessage("Login successful! Redirecting to dashboard...");
-      setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1500);
-    } else {
-      setMessage("Invalid credentials. Use admin/admin123 for demo");
+    try {
+      setMessage("Logging in...");
+      const response = await authAPI.login(form.username, form.password);
+      
+      if (response.success) {
+        setMessage("Login successful! Redirecting to dashboard...");
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1500);
+      } else {
+        setMessage("Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setMessage(error.message || "Login failed. Please try again.");
     }
   };
 

@@ -24,7 +24,7 @@ export default function Navbar() {
     </div>
 
         <nav className="hidden md:flex items-center gap-8 font-medium">
-          <a href="#home" className="hover:text-blue-600">Home</a>
+          <a href="/" className="hover:text-blue-600">Home</a>
           <a href="#institutions" className="hover:text-blue-600">Institutions</a>
           <a href="#stats" className="hover:text-blue-600">Stats</a>
           <a href="#contact" className="hover:text-blue-600">Contact</a>
