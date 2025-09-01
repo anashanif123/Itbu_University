@@ -34,6 +34,7 @@ app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? [
         'https://itbu-uni.vercel.app',
+        'https://itbu-university.vercel.app',
         'https://itbu-university-frontend.vercel.app',
         /\.vercel\.app$/
       ]
@@ -41,7 +42,9 @@ app.use(cors({
         'http://localhost:3000',
         'http://localhost:5173'
       ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Body parsing middleware
