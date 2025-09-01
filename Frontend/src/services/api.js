@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 // Helper function to get auth token from localStorage
 const getAuthToken = () => {
@@ -181,7 +181,8 @@ export const certificatesAPI = {
 // Health check
 export const healthCheck = async () => {
   try {
-    const response = await fetch('http://localhost:5001/health');
+    const base = API_BASE_URL.replace(/\/api$/, '');
+    const response = await fetch(`${base}/health`);
     const data = await response.json();
     return data;
   } catch (error) {

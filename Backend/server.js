@@ -31,9 +31,14 @@ app.use(limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.com'] 
-    : ['http://localhost:3000', 'http://localhost:5173'],
+  origin: process.env.NODE_ENV === 'production'
+    ? [
+        'https://itbu-university.vercel.app'
+      ]
+    : [
+        'http://localhost:3000',
+        'http://localhost:5173'
+      ],
   credentials: true
 }));
 
