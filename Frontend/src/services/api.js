@@ -1,22 +1,24 @@
+import { SECURITY_CONFIG, sanitizeInput, secureStorage } from '../config/security.js';
+
 // API Configuration
-const rawBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+const rawBase = SECURITY_CONFIG.API_BASE_URL;
 const API_BASE_URL = rawBase.replace(/\/?$/, '') // remove trailing slash
   .replace(/(?<!:)\/\/+/, '/') // collapse accidental double slashes
   ;
 
 // Helper function to get auth token from localStorage
 const getAuthToken = () => {
-  return localStorage.getItem('authToken');
+  return secureStorage.getItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY);
 };
 
 // Helper function to set auth token in localStorage
 const setAuthToken = (token) => {
-  localStorage.setItem('authToken', token);
+  secureStorage.setItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY, token);
 };
 
 // Helper function to remove auth token from localStorage
 const removeAuthToken = () => {
-  localStorage.removeItem('authToken');
+  secureStorage.removeItem(SECURITY_CONFIG.TOKEN_STORAGE_KEY);
 };
 
 // Generic API request function
@@ -27,6 +29,7 @@ const apiRequest = async (endpoint, options = {}) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
@@ -35,15 +38,37 @@ const apiRequest = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(url, config);
+    
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Invalid response format');
+    }
+    
     const data = await response.json();
 
     if (!response.ok) {
+      // Handle specific error cases
+      if (response.status === 401) {
+        // Token expired or invalid
+        removeAuthToken();
+        window.location.href = '/admin';
+        throw new Error('Session expired. Please login again.');
+      }
+      
+      if (response.status === 429) {
+        throw new Error('Too many requests. Please try again later.');
+      }
+      
       throw new Error(data.message || 'API request failed');
     }
 
     return data;
   } catch (error) {
-    console.error('API Error:', error);
+    // Only log errors in development
+    if (SECURITY_CONFIG.NODE_ENV === 'development') {
+      console.error('API Error:', error);
+    }
     throw error;
   }
 };
@@ -52,9 +77,16 @@ const apiRequest = async (endpoint, options = {}) => {
 export const authAPI = {
   // Login admin
   login: async (username, password) => {
+    // Sanitize inputs
+    const sanitizedUsername = sanitizeInput(username);
+    const sanitizedPassword = sanitizeInput(password);
+    
     const response = await apiRequest('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ 
+        username: sanitizedUsername, 
+        password: sanitizedPassword 
+      }),
     });
 
     if (response.success && response.data.token) {
@@ -92,7 +124,8 @@ export const authAPI = {
 export const resultsAPI = {
   // Search result by roll number
   searchResult: async (rollNumber) => {
-    return await apiRequest(`/results/search?rollNumber=${encodeURIComponent(rollNumber)}`);
+    const sanitizedRollNumber = sanitizeInput(rollNumber);
+    return await apiRequest(`/results/search?rollNumber=${encodeURIComponent(sanitizedRollNumber)}`);
   },
 
   // Get available categories
@@ -112,9 +145,10 @@ export const resultsAPI = {
 
   // Verify if roll number exists
   verifyRollNumber: async (rollNumber) => {
+    const sanitizedRollNumber = sanitizeInput(rollNumber);
     return await apiRequest('/results/verify-roll', {
       method: 'POST',
-      body: JSON.stringify({ rollNumber }),
+      body: JSON.stringify({ rollNumber: sanitizedRollNumber }),
     });
   },
 };

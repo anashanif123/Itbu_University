@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import { authAPI } from "../services/api";
+import { SECURITY_CONFIG, rateLimiter } from "../config/security";
 
 export default function AdminLogin() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -13,11 +14,19 @@ export default function AdminLogin() {
       return;
     }
 
+    // Check rate limiting
+    const clientId = 'login_' + form.username;
+    if (!rateLimiter.canAttempt(clientId)) {
+      setMessage("Too many login attempts. Please try again later.");
+      return;
+    }
+
     try {
       setMessage("Logging in...");
       const response = await authAPI.login(form.username, form.password);
       
       if (response.success) {
+        rateLimiter.resetAttempts(clientId);
         setMessage("Login successful! Redirecting to dashboard...");
         setTimeout(() => {
           window.location.href = "/dashboard";
@@ -26,7 +35,10 @@ export default function AdminLogin() {
         setMessage("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      console.error('Login error:', error);
+      // Only log errors in development
+      if (SECURITY_CONFIG.NODE_ENV === 'development') {
+        console.error('Login error:', error);
+      }
       setMessage(error.message || "Login failed. Please try again.");
     }
   };
@@ -138,14 +150,13 @@ export default function AdminLogin() {
               </button>
             </div>
 
-            {/* Demo Credentials */}
-            <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            {/* Security Notice */}
+            <div className="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-xl">
               <div className="flex items-start gap-3">
-                <span className="text-blue-600 text-lg">💡</span>
-                <div className="text-sm text-blue-800">
-                  <p className="font-medium mb-1">Demo Credentials</p>
-                  <p><strong>Username:</strong> admin</p>
-                  <p><strong>Password:</strong> admin123</p>
+                <span className="text-amber-600 text-lg">🔒</span>
+                <div className="text-sm text-amber-800">
+                  <p className="font-medium mb-1">Secure Access</p>
+                  <p>Please contact your system administrator for login credentials.</p>
                 </div>
               </div>
             </div>

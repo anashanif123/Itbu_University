@@ -2,17 +2,13 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Admin from '../models/Admin.js';
 import { generateToken, authenticateToken } from '../middleware/auth.js';
+import { handleValidationErrors, commonValidations } from '../middleware/security.js';
 
 const router = express.Router();
 
 // Validation rules
 const loginValidation = [
-  body('username')
-    .trim()
-    .notEmpty()
-    .withMessage('Username is required')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Username must be between 3 and 30 characters'),
+  commonValidations.username,
   body('password')
     .notEmpty()
     .withMessage('Password is required')
@@ -21,39 +17,16 @@ const loginValidation = [
 ];
 
 const registerValidation = [
-  body('username')
-    .trim()
-    .notEmpty()
-    .withMessage('Username is required')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Username must be between 3 and 30 characters')
-    .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('Username can only contain letters, numbers, and underscores'),
-  body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email')
-    .normalizeEmail(),
-  body('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Password must contain at least one lowercase letter, one uppercase letter, and one number')
+  commonValidations.username,
+  commonValidations.email,
+  commonValidations.password
 ];
 
 // @route   POST /api/auth/login
 // @desc    Admin login
 // @access  Public
-router.post('/login', loginValidation, async (req, res) => {
+router.post('/login', loginValidation, handleValidationErrors, async (req, res) => {
   try {
-    // Check validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation failed',
-        errors: errors.array()
-      });
-    }
 
     const { username, password } = req.body;
 
@@ -106,23 +79,13 @@ router.post('/login', loginValidation, async (req, res) => {
 // @route   POST /api/auth/register
 // @desc    Register new admin (super admin only)
 // @access  Private (Super Admin)
-router.post('/register', authenticateToken, registerValidation, async (req, res) => {
+router.post('/register', authenticateToken, registerValidation, handleValidationErrors, async (req, res) => {
   try {
     // Check if user is super admin
     if (req.admin.role !== 'super_admin') {
       return res.status(403).json({
         success: false,
         message: 'Only super admins can register new admins'
-      });
-    }
-
-    // Check validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation failed',
-        errors: errors.array()
       });
     }
 

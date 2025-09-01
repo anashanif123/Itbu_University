@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { authAPI, certificatesAPI } from "../services/api";
+import { SECURITY_CONFIG, validateFile } from "../config/security";
 
 export default function AdminDashboard() {
   const [rollNumber, setRollNumber] = useState("");
@@ -26,10 +27,13 @@ export default function AdminDashboard() {
       if (response.success) {
         setCertificates(response.data.certificates);
       }
-    } catch (error) {
-      console.error('Error loading certificates:', error);
-      setMessage("Failed to load certificates");
-    } finally {
+          } catch (error) {
+        // Only log errors in development
+        if (SECURITY_CONFIG.NODE_ENV === 'development') {
+          console.error('Error loading certificates:', error);
+        }
+        setMessage("Failed to load certificates");
+      } finally {
       setLoading(false);
     }
   };
@@ -37,6 +41,13 @@ export default function AdminDashboard() {
   const upload = async () => {
     if (!rollNumber.trim() || !file) {
       setMessage("Please enter roll number and select a PDF file");
+      return;
+    }
+
+    // Validate file
+    const fileValidation = validateFile(file);
+    if (!fileValidation.valid) {
+      setMessage(fileValidation.error);
       return;
     }
 
@@ -63,7 +74,10 @@ export default function AdminDashboard() {
         setMessage("Upload failed. Please try again.");
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      // Only log errors in development
+      if (SECURITY_CONFIG.NODE_ENV === 'development') {
+        console.error('Upload error:', error);
+      }
       setMessage(error.message || "Upload failed. Please try again.");
     } finally {
       setUploading(false);
@@ -81,7 +95,10 @@ export default function AdminDashboard() {
           setMessage("Failed to delete certificate");
         }
       } catch (error) {
-        console.error('Delete error:', error);
+        // Only log errors in development
+        if (SECURITY_CONFIG.NODE_ENV === 'development') {
+          console.error('Delete error:', error);
+        }
         setMessage(error.message || "Failed to delete certificate");
       }
     }
@@ -92,7 +109,10 @@ export default function AdminDashboard() {
       await authAPI.logout();
       window.location.href = "/admin";
     } catch (error) {
-      console.error('Logout error:', error);
+      // Only log errors in development
+      if (SECURITY_CONFIG.NODE_ENV === 'development') {
+        console.error('Logout error:', error);
+      }
       // Force logout even if API call fails
       window.location.href = "/admin";
     }

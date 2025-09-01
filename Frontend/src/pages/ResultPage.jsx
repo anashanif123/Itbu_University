@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { resultsAPI } from "../services/api";
+import { SECURITY_CONFIG } from "../config/security";
 
 export default function ResultPage() {
   const [roll, setRoll] = useState("");
@@ -30,7 +31,10 @@ export default function ResultPage() {
         setMessage("No result found for the provided roll number.");
       }
     } catch (error) {
-      console.error('Search error:', error);
+      // Only log errors in development
+      if (SECURITY_CONFIG.NODE_ENV === 'development') {
+        console.error('Search error:', error);
+      }
       setMessage(error.message || "Search failed. Please try again.");
     } finally {
       setLoading(false);
