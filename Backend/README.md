@@ -1,250 +1,374 @@
-# ITBU University Backend API
+# ITBU University - Backend API
 
-A comprehensive backend API for ITBU University's result management system, built with Node.js, Express, and MongoDB.
+## 🎓 Overview
+Secure, scalable, and high-performance backend API for ITBU University result management system. Built with Node.js, Express, and MongoDB.
 
-## Features
+## ✨ Features
 
-- 🔐 **Admin Authentication**: Secure JWT-based authentication system
-- 📄 **Certificate Management**: Upload, view, update, and delete student certificates
-- 🔍 **Result Search**: Public API for students to search their results
-- 📁 **File Upload**: Cloudinary integration for PDF certificate storage
-- 🛡️ **Security**: Rate limiting, CORS, helmet, and input validation
-- 📊 **Statistics**: Comprehensive analytics and reporting
-- 🗄️ **Database**: MongoDB with Mongoose ODM
+### 🔒 Security Features
+- **Enhanced Security Headers** - CSP, HSTS, XSS protection
+- **Rate Limiting** - API and authentication endpoint protection
+- **Input Validation & Sanitization** - XSS and injection prevention
+- **JWT Authentication** - Secure token-based auth
+- **File Upload Security** - Type, size, and malicious pattern validation
+- **CORS Configuration** - Environment-specific origin control
 
-## Tech Stack
+### ⚡ Performance Features
+- **Compression** - Gzip compression enabled
+- **Efficient Middleware** - Streamlined request processing
+- **Database Optimization** - MongoDB with proper indexing
+- **Error Handling** - Fast and informative error responses
 
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MongoDB with Mongoose
-- **Authentication**: JWT (JSON Web Tokens)
-- **File Storage**: Cloudinary
-- **Validation**: Express Validator
-- **Security**: Helmet, CORS, Rate Limiting
+### 🛡️ Production Ready
+- **Environment Configuration** - Secure environment management
+- **Logging** - Production-safe error logging
+- **Health Checks** - API health monitoring
+- **Scalable Architecture** - Ready for growth
 
-## Installation
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+
+- MongoDB (local or cloud)
+- npm or yarn
+
+### Installation
 
 1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Backend
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Environment Setup**
-   ```bash
-   cp env.example .env
-   ```
-   
-   Update the `.env` file with your configuration:
-   ```env
-   PORT=5000
-   NODE_ENV=development
-   MONGODB_URI=mongodb://localhost:27017/itbu_university
-   JWT_SECRET=your_super_secret_jwt_key_here
-   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-   CLOUDINARY_API_KEY=your_cloudinary_api_key
-   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-   ADMIN_USERNAME=admin
-   ADMIN_PASSWORD=admin123
-   ```
-
-4. **Database Setup**
-   - Install MongoDB locally or use MongoDB Atlas
-   - Update `MONGODB_URI` in your `.env` file
-
-5. **Cloudinary Setup** (Optional for file uploads)
-   - Create a Cloudinary account
-   - Get your cloud name, API key, and API secret
-   - Update the Cloudinary credentials in your `.env` file
-
-6. **Seed Database** (Optional)
-   ```bash
-   node utils/seedDatabase.js
-   ```
-
-## Running the Application
-
-### Development Mode
 ```bash
-npm run dev
+git clone <repository-url>
+cd Backend
 ```
 
-### Production Mode
+2. **Install dependencies**
 ```bash
+npm install
+```
+
+3. **Environment Setup**
+Copy `env.example` to `.env`:
+```bash
+cp env.example .env
+```
+
+Configure your `.env` file:
+```bash
+# Cloudinary Configuration
+CLOUDINARY_API_KEY=your_cloudinary_api_key_here
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret_here
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name_here
+
+# JWT Configuration - Use a strong, random secret (32+ characters)
+JWT_SECRET=your_super_secure_jwt_secret_key_here_minimum_32_characters
+
+# Database Configuration
+MONGODB_URI=mongodb://localhost:27017/itbu_university
+# For production: mongodb+srv://username:password@cluster.mongodb.net/database_name
+
+# Server Configuration
+NODE_ENV=development
+PORT=5001
+
+# Admin Default Credentials (Change these in production!)
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+
+# Security Configuration
+BCRYPT_ROUNDS=12
+SESSION_SECRET=your_session_secret_here
+
+# CORS Configuration (for production)
+FRONTEND_URL=https://www.itbu.university
+```
+
+4. **Start the server**
+```bash
+# Development
+npm run dev
+
+# Production
 npm start
 ```
 
-The server will start on `http://localhost:5000` (or your configured PORT).
-
-## API Endpoints
-
-### Authentication Routes (`/api/auth`)
-- `POST /login` - Admin login
-- `POST /register` - Register new admin (super admin only)
-- `GET /me` - Get current admin profile
-- `PUT /profile` - Update admin profile
-- `POST /change-password` - Change password
-- `POST /logout` - Admin logout
-
-### Certificate Routes (`/api/certificates`)
-- `POST /upload` - Upload new certificate
-- `GET /` - Get all certificates (with pagination and filtering)
-- `GET /:id` - Get single certificate
-- `PUT /:id` - Update certificate
-- `DELETE /:id` - Delete certificate (soft delete)
-- `POST /:id/verify` - Verify certificate
-- `GET /stats/overview` - Get certificate statistics
-
-### Result Routes (`/api/results`)
-- `GET /search?rollNumber=ROLL123` - Search result by roll number
-- `GET /search/:rollNumber` - Alternative search endpoint
-- `GET /categories` - Get available categories
-- `GET /stats/public` - Get public statistics
-- `GET /recent` - Get recent results
-- `POST /verify-roll` - Verify if roll number exists
-
-### Health Check
-- `GET /health` - Server health status
-
-## API Usage Examples
-
-### Admin Login
+5. **Test the API**
 ```bash
-curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "admin123"}'
+curl http://localhost:5001/health
 ```
 
-### Search Result
-```bash
-curl -X GET "http://localhost:5000/api/results/search?rollNumber=ITBU2024001"
-```
+## 📁 Project Structure
 
-### Upload Certificate (with authentication)
-```bash
-curl -X POST http://localhost:5000/api/certificates/upload \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -F "certificate=@certificate.pdf" \
-  -F "rollNumber=ITBU2024006" \
-  -F "category=madrasa" \
-  -F "studentName=John Doe" \
-  -F "course=Islamic Studies" \
-  -F "year=2024"
-```
-
-## Database Models
-
-### Admin Model
-- `username`: Unique admin username
-- `email`: Admin email address
-- `password`: Hashed password
-- `role`: Admin role (admin/super_admin)
-- `isActive`: Account status
-- `lastLogin`: Last login timestamp
-
-### Certificate Model
-- `rollNumber`: Unique student roll number
-- `category`: Certificate category (madrasa/school/coaching/college)
-- `studentName`: Student's full name
-- `course`: Course name
-- `year`: Academic year
-- `semester`: Semester information
-- `grade`: Student grade
-- `percentage`: Student percentage
-- `pdfUrl`: Cloudinary URL for certificate PDF
-- `fileName`: Original file name
-- `isVerified`: Verification status
-- `uploadedBy`: Admin who uploaded the certificate
-
-## Security Features
-
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: bcrypt for password security
-- **Rate Limiting**: Prevents API abuse
-- **Input Validation**: Comprehensive request validation
-- **CORS**: Cross-origin resource sharing configuration
-- **Helmet**: Security headers
-- **File Upload Security**: PDF-only uploads with size limits
-
-## Error Handling
-
-The API includes comprehensive error handling:
-- Validation errors with detailed messages
-- Authentication and authorization errors
-- Database connection errors
-- File upload errors
-- Custom error responses with appropriate HTTP status codes
-
-## Development
-
-### Project Structure
 ```
 Backend/
-├── config/
+├── config/                 # Configuration files
 │   └── cloudinary.js
-├── middleware/
-│   ├── auth.js
-│   └── upload.js
-├── models/
+├── middleware/             # Custom middleware
+│   ├── auth.js            # Authentication middleware
+│   ├── security.js        # Security middleware
+│   └── upload.js          # File upload middleware
+├── models/                # Database models
 │   ├── Admin.js
 │   └── Certificate.js
-├── routes/
-│   ├── auth.js
-│   ├── certificates.js
-│   └── results.js
-├── utils/
+├── routes/                # API routes
+│   ├── auth.js           # Authentication routes
+│   ├── certificates.js   # Certificate management
+│   └── results.js        # Result search
+├── scripts/              # Utility scripts
+│   ├── addAdmin.js
+│   ├── addMockData.js
+│   └── setup.js
+├── utils/                # Utility functions
 │   └── seedDatabase.js
-├── uploads/
-├── server.js
+├── uploads/              # File uploads directory
+├── server.js             # Main server file
 ├── package.json
 └── README.md
 ```
 
-### Adding New Features
+## 🛠️ Available Scripts
 
-1. Create new models in `models/` directory
-2. Add routes in `routes/` directory
-3. Update middleware as needed
-4. Test endpoints thoroughly
-5. Update documentation
+```bash
+# Development
+npm run dev          # Start with nodemon
+npm start           # Start production server
 
-## Deployment
+# Database
+npm run setup       # Initial database setup
+npm run seed        # Seed database with sample data
+npm run add-admin   # Add admin user
 
-### Environment Variables for Production
-- Set `NODE_ENV=production`
-- Use a strong `JWT_SECRET`
-- Configure production MongoDB URI
-- Set up Cloudinary credentials
-- Configure CORS origins for your frontend domain
-
-### Docker Deployment (Optional)
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 5000
-CMD ["npm", "start"]
+# Utilities
+npm run add-mock    # Add mock data
 ```
 
-## Contributing
+## 🔧 API Endpoints
+
+### Authentication
+```
+POST /api/auth/login          # Admin login
+POST /api/auth/register       # Register new admin (super admin only)
+GET  /api/auth/me            # Get current admin profile
+PUT  /api/auth/profile       # Update admin profile
+POST /api/auth/change-password # Change password
+POST /api/auth/logout        # Admin logout
+```
+
+### Results
+```
+GET  /api/results/search     # Search result by roll number
+GET  /api/results/categories # Get available categories
+GET  /api/results/stats/public # Get public statistics
+GET  /api/results/recent     # Get recent results
+POST /api/results/verify-roll # Verify roll number exists
+```
+
+### Certificates
+```
+POST   /api/certificates/upload    # Upload certificate
+GET    /api/certificates          # Get all certificates
+GET    /api/certificates/:id      # Get single certificate
+PUT    /api/certificates/:id      # Update certificate
+DELETE /api/certificates/:id      # Delete certificate
+POST   /api/certificates/:id/verify # Verify certificate
+GET    /api/certificates/stats/overview # Get statistics
+```
+
+### Health Check
+```
+GET /health                     # API health status
+```
+
+## 🔒 Security Configuration
+
+### Rate Limiting
+- **General API**: 100 requests per 15 minutes per IP
+- **Authentication**: 5 requests per 15 minutes per IP
+- **Health Check**: Excluded from rate limiting
+
+### Security Headers
+- **Helmet.js**: Comprehensive security headers
+- **CSP**: Content Security Policy
+- **HSTS**: HTTP Strict Transport Security
+- **X-Frame-Options**: DENY
+- **X-XSS-Protection**: Enabled
+
+### Input Validation
+- **Express-validator**: Server-side validation
+- **Input Sanitization**: XSS prevention
+- **File Upload Validation**: Type, size, malicious patterns
+
+## 🗄️ Database Models
+
+### Admin Model
+```javascript
+{
+  username: String (required, unique)
+  email: String (required, unique)
+  password: String (required, hashed)
+  role: String (admin, super_admin)
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+### Certificate Model
+```javascript
+{
+  rollNumber: String (required, unique)
+  fileName: String
+  pdfUrl: String (Cloudinary URL)
+  uploadedBy: ObjectId (Admin reference)
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+## 🚀 Deployment
+
+### Render.com (Recommended)
+1. Connect your GitHub repository
+2. Set environment variables
+3. Configure build settings:
+   - Build Command: `npm install`
+   - Start Command: `npm start`
+4. Deploy
+
+### Heroku
+```bash
+# Install Heroku CLI
+heroku create your-app-name
+heroku config:set NODE_ENV=production
+heroku config:set MONGODB_URI=your_mongodb_uri
+heroku config:set JWT_SECRET=your_jwt_secret
+git push heroku main
+```
+
+### VPS/Server
+```bash
+# Install PM2
+npm install -g pm2
+
+# Start application
+pm2 start server.js --name "itbu-backend"
+
+# Save PM2 configuration
+pm2 save
+pm2 startup
+```
+
+## 🔧 Environment Variables
+
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `NODE_ENV` | Environment | Yes | `development` |
+| `PORT` | Server port | No | `5001` |
+| `MONGODB_URI` | Database URL | Yes | - |
+| `JWT_SECRET` | JWT secret key | Yes | - |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | Yes | - |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | Yes | - |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Yes | - |
+| `ADMIN_USERNAME` | Default admin username | No | `admin` |
+| `ADMIN_PASSWORD` | Default admin password | No | `admin123` |
+| `BCRYPT_ROUNDS` | Bcrypt rounds | No | `12` |
+| `FRONTEND_URL` | Frontend URL for CORS | No | - |
+
+## 🛡️ Security Checklist
+
+### Pre-Deployment
+- [ ] Strong JWT secret (32+ characters)
+- [ ] Secure database credentials
+- [ ] CORS origins configured
+- [ ] Rate limiting enabled
+- [ ] Security headers active
+- [ ] File upload validation working
+- [ ] Input sanitization active
+- [ ] Error handling production-safe
+
+### Post-Deployment
+- [ ] HTTPS enabled
+- [ ] Security headers present
+- [ ] Rate limiting functioning
+- [ ] Authentication flow secure
+- [ ] File uploads validated
+- [ ] Monitoring active
+
+## 📊 Monitoring
+
+### Health Check
+```bash
+curl https://your-api-domain.com/health
+```
+
+### Logs to Monitor
+- Authentication failures
+- Rate limit violations
+- File upload attempts
+- Database errors
+- API errors
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Error**
+   - Check MongoDB URI
+   - Verify database credentials
+   - Ensure database is accessible
+
+2. **CORS Error**
+   - Check CORS configuration
+   - Verify frontend URL in allowed origins
+   - Ensure HTTPS in production
+
+3. **File Upload Issues**
+   - Check Cloudinary configuration
+   - Verify file size limits
+   - Check file type validation
+
+4. **Authentication Issues**
+   - Verify JWT secret
+   - Check token expiration
+   - Ensure proper headers
+
+### Development Tips
+- Use Postman for API testing
+- Check server logs for errors
+- Verify environment variables
+- Test all endpoints
+
+## 📈 Performance
+
+### Optimization Features
+- **Compression**: Gzip compression
+- **Database Indexing**: Optimized queries
+- **Caching**: Efficient data caching
+- **Rate Limiting**: Prevents abuse
+
+### Monitoring
+- **Health Checks**: API status monitoring
+- **Error Logging**: Comprehensive error tracking
+- **Performance Metrics**: Response time monitoring
+
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
+4. Test thoroughly
 5. Submit a pull request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License.
 
-## Support
+## 🆘 Support
 
-For support and questions, please contact the development team or create an issue in the repository.
+For support and questions:
+- **Email**: support@itbu.edu
+- **Documentation**: Check the docs folder
+- **Issues**: Create a GitHub issue
+
+---
+
+**Built with ❤️ for ITBU University**
+
+*Last updated: December 2024*
