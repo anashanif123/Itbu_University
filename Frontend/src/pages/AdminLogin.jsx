@@ -150,16 +150,7 @@ export default function AdminLogin() {
               </div>
             </div>
 
-            {/* Demo Notice */}
-            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-              <div className="flex items-start gap-3">
-                <span className="text-yellow-600 text-lg">⚠️</span>
-                <div className="text-sm text-yellow-800">
-                  <p className="font-medium mb-1">Demo Version</p>
-                  <p>This is a frontend demo. In production, this would connect to a backend authentication system.</p>
-                </div>
-              </div>
-            </div>
+          
           </motion.div>
         </div>
       </section>

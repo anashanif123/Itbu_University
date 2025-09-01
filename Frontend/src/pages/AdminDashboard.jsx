@@ -153,23 +153,7 @@ export default function AdminDashboard() {
             </motion.div>
           )}
 
-          {/* Demo Notice */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 sm:p-6 mb-8"
-          >
-            <div className="flex items-start sm:items-center gap-3">
-              <span className="text-yellow-600 text-xl sm:text-2xl">⚠️</span>
-              <div>
-                <h3 className="font-semibold text-yellow-900 mb-1 text-sm sm:text-base">Demo Version</h3>
-                <p className="text-yellow-800 text-xs sm:text-sm">
-                  This is a frontend demo. In a production environment, this would connect to a backend database and Cloudinary for file management.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
+       
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Upload Section */}
             <motion.div

@@ -152,16 +152,7 @@ export default function ResultPage() {
               </motion.div>
             )}
 
-            {/* Demo Notice */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-xl">⚠️</span>
-              </div>
-              <h3 className="font-semibold text-yellow-900 mb-2">Demo Version</h3>
-              <p className="text-yellow-800 text-sm">
-                This is a frontend demo. In a production environment, this would connect to a backend database to search for actual student results.
-              </p>
-            </div>
+         
           </motion.div>
         </div>
       </section>
