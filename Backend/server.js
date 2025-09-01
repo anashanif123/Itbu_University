@@ -42,7 +42,7 @@ app.use('/api', limiter);
 const allowedOrigins =
   NODE_ENV === 'production'
     ? [
-        'https://itbu-university.vercel.app',
+        'https://itbu-university.vercel.app/',
         'https://your-custom-domain.com', // add custom domain here if needed
       ]
     : ['http://localhost:3000', 'http://localhost:5173'];
