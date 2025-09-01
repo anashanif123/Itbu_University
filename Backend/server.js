@@ -33,7 +33,7 @@ app.use(limiter);
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? [
-        'https://itbu-university.vercel.app',
+        'https://itbu-uni.vercel.app',
         'https://itbu-university-frontend.vercel.app',
         /\.vercel\.app$/
       ]
