@@ -20,6 +20,7 @@ const universityCourses = [
   { name: "Ph.D Social Science", duration: "1.5 Years" },
   { name: "Ph.D IT Management", duration: "2/4 Years" },
   { name: "CA", duration: "2/4 Years" },
+  { name: "Data science", duration: "2/4 Years" },
 ];
 
 export default function UniversityCoursesSection() {
