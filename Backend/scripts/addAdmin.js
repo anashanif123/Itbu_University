@@ -20,14 +20,14 @@ const addAdmin = async () => {
 
     // Create new admin
     const admin = new Admin({
-      username: 'admin',
-      password: 'admin123'
+      username: 'itbu',
+      password: 'pakistanit3..'
     });
 
     await admin.save();
     console.log('✅ Admin created successfully!');
-    console.log('Username: admin');
-    console.log('Password: admin123');
+    console.log('Username: itbu');
+    console.log('Password: pakistanit3..');
 
   } catch (error) {
     console.error('Error creating admin:', error);
