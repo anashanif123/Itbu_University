@@ -25,7 +25,7 @@ const socialLinks = [
   const contactInfo = [
     { icon: "📧", text: "universityitbu@gmail.com" },
     { icon: "📞", text: "+923092163536" },
-    { icon: "📍", text: "Main campus building  korangi No 7 Karachi," },
+    { icon: "📍", text: "Building No: L,56/9 Somro street Sindh," },
     { icon: "🕒", text: "Mon-Fri: 9:00 AM - 6:00 PM" },
   ];
 
