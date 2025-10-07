@@ -11,6 +11,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  // ✅ Check authentication
   useEffect(() => {
     if (!authAPI.isAuthenticated()) {
       window.location.href = "/admin";
@@ -19,6 +20,7 @@ export default function AdminDashboard() {
     loadCertificates();
   }, []);
 
+  // ✅ Fetch certificates list
   const loadCertificates = async () => {
     try {
       setLoading(true);
@@ -33,12 +35,14 @@ export default function AdminDashboard() {
     }
   };
 
+  // ✅ Upload handler
   const upload = async () => {
     if (!rollNumber.trim() || files.length === 0) {
-      setMessage("Please enter roll number and select image files");
+      setMessage("⚠️ Please enter roll number and select at least one image file");
       return;
     }
 
+    // Validate all files
     for (let file of files) {
       const valid = validateFile(file, ["image/jpeg", "image/png"]);
       if (!valid.valid) {
@@ -49,40 +53,43 @@ export default function AdminDashboard() {
 
     try {
       setUploading(true);
-      setMessage("Uploading images and generating PDF...");
+      setMessage("📦 Uploading images & generating PDF...");
 
       const formData = new FormData();
       files.forEach((file) => formData.append("images", file));
       formData.append("rollNumber", rollNumber.trim());
 
       const response = await certificatesAPI.uploadCertificate(formData);
+
       if (response.success) {
-        setMessage("Certificate PDF created successfully!");
+        setMessage("✅ Certificate PDF created successfully!");
         setRollNumber("");
         setFiles([]);
-        document.getElementById("file-input").value = "";
+        const fileInput = document.getElementById("file-input");
+        if (fileInput) fileInput.value = "";
         loadCertificates();
       } else {
-        setMessage("Upload failed. Please try again.");
+        setMessage("❌ Upload failed. Please try again.");
       }
     } catch (error) {
       if (SECURITY_CONFIG.NODE_ENV === "development")
         console.error("Upload error:", error);
-      setMessage(error.message || "Upload failed. Please try again.");
+      setMessage(error.message || "❌ Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
   };
 
+  // ✅ Delete certificate
   const remove = async (id) => {
     if (window.confirm("Are you sure you want to delete this certificate?")) {
       try {
         const response = await certificatesAPI.deleteCertificate(id);
         if (response.success) {
-          setMessage("Certificate deleted successfully!");
+          setMessage("🗑️ Certificate deleted successfully!");
           loadCertificates();
         } else {
-          setMessage("Failed to delete certificate");
+          setMessage("❌ Failed to delete certificate");
         }
       } catch (error) {
         if (SECURITY_CONFIG.NODE_ENV === "development")
@@ -92,6 +99,7 @@ export default function AdminDashboard() {
     }
   };
 
+  // ✅ Logout
   const logout = async () => {
     try {
       await authAPI.logout();
@@ -115,7 +123,7 @@ export default function AdminDashboard() {
               <h1 className="text-4xl font-bold mb-2">
                 Admin <span className="text-blue-200">Dashboard</span>
               </h1>
-              <p className="text-blue-100">Manage student certificates</p>
+              <p className="text-blue-100">Manage student certificates & results</p>
             </motion.div>
 
             <motion.button
@@ -128,23 +136,23 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* Main Section */}
+      {/* Main Content */}
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4">
           {message && (
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-blue-700">
-              ℹ️ {message}
+              {message}
             </div>
           )}
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Upload */}
+            {/* Upload Section */}
             <div className="bg-white rounded-2xl shadow-xl border p-8">
               <h3 className="text-2xl font-bold mb-4 text-center text-gray-900">
                 Upload Images
               </h3>
               <p className="text-center text-gray-600 mb-6">
-                Upload up to 5 images to generate a single PDF
+                Upload up to <b>5</b> JPG/PNG images to generate a single PDF
               </p>
 
               <label className="block font-medium text-gray-700 mb-2">
@@ -163,18 +171,24 @@ export default function AdminDashboard() {
               <input
                 id="file-input"
                 type="file"
-                accept="image/*"
+                accept="image/jpeg, image/png"
                 multiple
                 onChange={(e) => setFiles([...e.target.files])}
                 className="w-full px-4 py-3 rounded-xl border bg-gray-50 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
+
+              {files.length > 0 && (
+                <p className="text-sm text-gray-500 mt-2">
+                  {files.length} file{files.length > 1 ? "s" : ""} selected
+                </p>
+              )}
 
               <button
                 onClick={upload}
                 disabled={uploading}
                 className="mt-6 w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 transition-all"
               >
-                {uploading ? "Uploading..." : "📤 Upload & Create PDF"}
+                {uploading ? "⏳ Uploading..." : "📤 Upload & Generate PDF"}
               </button>
             </div>
 
@@ -183,45 +197,50 @@ export default function AdminDashboard() {
               <h3 className="text-2xl font-bold mb-4 text-gray-900">
                 Certificates
               </h3>
+
               {loading ? (
-                <p>Loading...</p>
+                <div className="py-6 text-gray-500">Loading certificates...</div>
               ) : certificates.length === 0 ? (
-                <p>No certificates found.</p>
+                <div className="py-6 text-gray-500">
+                  No certificates found. Upload one to get started!
+                </div>
               ) : (
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2">Roll Number</th>
-                      <th className="text-left py-2">PDF</th>
-                      <th className="text-left py-2">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {certificates.map((c) => (
-                      <tr key={c._id} className="border-b">
-                        <td className="py-2">{c.rollNumber}</td>
-                        <td className="py-2">
-                          <a
-                            href={c.pdfUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:underline"
-                          >
-                            View PDF
-                          </a>
-                        </td>
-                        <td className="py-2">
-                          <button
-                            onClick={() => remove(c._id)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg"
-                          >
-                            🗑 Delete
-                          </button>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border-collapse">
+                    <thead>
+                      <tr className="border-b bg-gray-50">
+                        <th className="text-left py-2 px-3">Roll Number</th>
+                        <th className="text-left py-2 px-3">PDF</th>
+                        <th className="text-left py-2 px-3">Action</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {certificates.map((c) => (
+                        <tr key={c._id} className="border-b hover:bg-gray-50">
+                          <td className="py-2 px-3">{c.rollNumber}</td>
+                          <td className="py-2 px-3">
+                            <a
+                              href={c.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline"
+                            >
+                              View PDF
+                            </a>
+                          </td>
+                          <td className="py-2 px-3">
+                            <button
+                              onClick={() => remove(c._id)}
+                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg"
+                            >
+                              🗑 Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           </div>
