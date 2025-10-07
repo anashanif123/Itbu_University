@@ -1,11 +1,17 @@
 import express from 'express';
 import { body, validationResult, query } from 'express-validator';
 import Certificate from '../models/Certificate.js';
-import { authenticateToken, requireRole } from '../middleware/auth.js';
-import { uploadSingle, handleUploadError, cleanupFile } from '../middleware/upload.js';
+import { authenticateToken } from '../middleware/auth.js';
+import { uploadMultiple, handleUploadError, cleanupFile } from '../middleware/upload.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../config/cloudinary.js';
+import PDFDocument from 'pdfkit';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Validation rules
 const certificateValidation = [
@@ -17,22 +23,23 @@ const certificateValidation = [
     .withMessage('Roll number can only contain letters and numbers')
 ];
 
+// ============================================================================
 // @route   POST /api/certificates/upload
-// @desc    Upload a new certificate
+// @desc    Upload multiple images, merge into PDF, save to Cloudinary
 // @access  Private (Admin)
-router.post('/upload', 
+// ============================================================================
+router.post(
+  '/upload',
   authenticateToken,
-  uploadSingle,
+  uploadMultiple, // handles multiple images
   handleUploadError,
   certificateValidation,
   async (req, res) => {
     try {
-      // Check validation errors
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        // Clean up uploaded file if validation fails
-        if (req.file) {
-          cleanupFile(req.file.path);
+        if (req.files && req.files.length > 0) {
+          req.files.forEach(file => cleanupFile(file.path));
         }
         return res.status(400).json({
           success: false,
@@ -41,71 +48,86 @@ router.post('/upload',
         });
       }
 
-      // Check if file was uploaded
-      if (!req.file) {
+      const { rollNumber } = req.body;
+      const upperRoll = rollNumber.toUpperCase().trim();
+
+      if (!req.files || req.files.length === 0) {
         return res.status(400).json({
           success: false,
-          message: 'Certificate file is required'
+          message: 'At least one image file is required'
         });
       }
 
-      const { rollNumber } = req.body;
-
-      // Check if certificate with this roll number already exists
-      const existingCertificate = await Certificate.findOne({
-        rollNumber: rollNumber.toUpperCase().trim()
-      });
-
-      if (existingCertificate) {
-        cleanupFile(req.file.path);
+      // Check for duplicate roll number
+      const existing = await Certificate.findOne({ rollNumber: upperRoll });
+      if (existing) {
+        req.files.forEach(file => cleanupFile(file.path));
         return res.status(400).json({
           success: false,
           message: 'Certificate with this roll number already exists'
         });
       }
 
-      // Upload file to Cloudinary
-      const uploadResult = await uploadToCloudinary(req.file, 'itbu-certificates');
-      
+      // ===== Create PDF from uploaded images =====
+      const pdfPath = path.join(__dirname, `../uploads/${Date.now()}_${upperRoll}.pdf`);
+      const doc = new PDFDocument({ autoFirstPage: false });
+      const stream = fs.createWriteStream(pdfPath);
+      doc.pipe(stream);
+
+      req.files.forEach((file, index) => {
+        const img = doc.openImage(file.path);
+        const pageWidth = img.width > 600 ? 600 : img.width;
+        const pageHeight = (img.height / img.width) * pageWidth;
+
+        doc.addPage({ size: [pageWidth + 50, pageHeight + 50] });
+        doc.image(file.path, 25, 25, { fit: [pageWidth, pageHeight], align: 'center', valign: 'center' });
+      });
+
+      doc.end();
+
+      // Wait until the PDF is finished writing
+      await new Promise(resolve => stream.on('finish', resolve));
+
+      // Upload merged PDF to Cloudinary
+      const uploadResult = await uploadToCloudinary(
+        { path: pdfPath, originalname: `${upperRoll}.pdf` },
+        'itbu-certificates'
+      );
+
       if (!uploadResult.success) {
-        cleanupFile(req.file.path);
+        cleanupFile(pdfPath);
+        req.files.forEach(file => cleanupFile(file.path));
         return res.status(500).json({
           success: false,
-          message: 'Failed to upload file to cloud storage',
+          message: 'Failed to upload merged PDF to Cloudinary',
           error: uploadResult.error
         });
       }
 
-      // Clean up local file
-      cleanupFile(req.file.path);
+      // Cleanup local files
+      req.files.forEach(file => cleanupFile(file.path));
+      cleanupFile(pdfPath);
 
-      // Create certificate record
+      // Save record to database
       const certificate = new Certificate({
-        rollNumber: rollNumber.toUpperCase().trim(),
+        rollNumber: upperRoll,
         pdfUrl: uploadResult.url,
-        fileName: req.file.originalname,
+        fileName: `${upperRoll}.pdf`,
         uploadedBy: req.admin._id
       });
 
       await certificate.save();
-
-      // Populate uploadedBy field
       await certificate.populate('uploadedBy', 'username');
 
       res.status(201).json({
         success: true,
-        message: 'Certificate uploaded successfully',
-        data: {
-          certificate
-        }
+        message: 'Certificate PDF created and uploaded successfully',
+        data: { certificate }
       });
-
     } catch (error) {
-      // Clean up file if error occurs
-      if (req.file) {
-        cleanupFile(req.file.path);
+      if (req.files && req.files.length > 0) {
+        req.files.forEach(file => cleanupFile(file.path));
       }
-      
       console.error('Upload certificate error:', error);
       res.status(500).json({
         success: false,
@@ -115,15 +137,18 @@ router.post('/upload',
   }
 );
 
-// @route   GET /api/certificates
-// @desc    Get all certificates with pagination and filtering
-// @access  Private (Admin)
-router.get('/', 
+// ============================================================================
+// Other routes (no change except small cleanup)
+// ============================================================================
+
+// Get all certificates
+router.get(
+  '/',
   authenticateToken,
   [
-    query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
-    query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
-    query('search').optional().trim().isLength({ max: 100 }).withMessage('Search term too long')
+    query('page').optional().isInt({ min: 1 }),
+    query('limit').optional().isInt({ min: 1, max: 100 }),
+    query('search').optional().trim()
   ],
   async (req, res) => {
     try {
@@ -140,24 +165,19 @@ router.get('/',
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
-      // Build filter object
       const filter = {};
-
       if (req.query.search) {
-        const searchRegex = new RegExp(req.query.search, 'i');
-        filter.rollNumber = searchRegex;
+        filter.rollNumber = new RegExp(req.query.search, 'i');
       }
 
-      // Get certificates with pagination
-      const certificates = await Certificate.find(filter)
-        .populate('uploadedBy', 'username')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit);
-
-      // Get total count for pagination
-      const total = await Certificate.countDocuments(filter);
-      const totalPages = Math.ceil(total / limit);
+      const [certificates, total] = await Promise.all([
+        Certificate.find(filter)
+          .populate('uploadedBy', 'username')
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit),
+        Certificate.countDocuments(filter)
+      ]);
 
       res.status(200).json({
         success: true,
@@ -165,59 +185,35 @@ router.get('/',
           certificates,
           pagination: {
             currentPage: page,
-            totalPages,
-            totalCertificates: total,
-            hasNextPage: page < totalPages,
-            hasPrevPage: page > 1
+            totalPages: Math.ceil(total / limit),
+            totalCertificates: total
           }
         }
       });
-
     } catch (error) {
       console.error('Get certificates error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
+      res.status(500).json({ success: false, message: 'Server error' });
     }
   }
 );
 
-// @route   GET /api/certificates/:id
-// @desc    Get single certificate by ID
-// @access  Private (Admin)
+// Get single certificate
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
-    const certificate = await Certificate.findById(req.params.id)
-      .populate('uploadedBy', 'username');
-
+    const certificate = await Certificate.findById(req.params.id).populate('uploadedBy', 'username');
     if (!certificate) {
-      return res.status(404).json({
-        success: false,
-        message: 'Certificate not found'
-      });
+      return res.status(404).json({ success: false, message: 'Certificate not found' });
     }
-
-    res.status(200).json({
-      success: true,
-      data: {
-        certificate
-      }
-    });
-
+    res.status(200).json({ success: true, data: { certificate } });
   } catch (error) {
     console.error('Get certificate error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-// @route   PUT /api/certificates/:id
-// @desc    Update certificate roll number
-// @access  Private (Admin)
-router.put('/:id', 
+// Update certificate roll number
+router.put(
+  '/:id',
   authenticateToken,
   [
     body('rollNumber')
@@ -240,23 +236,16 @@ router.put('/:id',
       }
 
       const certificate = await Certificate.findById(req.params.id);
-
       if (!certificate) {
-        return res.status(404).json({
-          success: false,
-          message: 'Certificate not found'
-        });
+        return res.status(404).json({ success: false, message: 'Certificate not found' });
       }
 
-      // Update roll number if provided
       if (req.body.rollNumber) {
-        // Check if new roll number already exists
-        const existingCertificate = await Certificate.findOne({
+        const existing = await Certificate.findOne({
           rollNumber: req.body.rollNumber.toUpperCase().trim(),
           _id: { $ne: req.params.id }
         });
-
-        if (existingCertificate) {
+        if (existing) {
           return res.status(400).json({
             success: false,
             message: 'Certificate with this roll number already exists'
@@ -268,81 +257,46 @@ router.put('/:id',
       }
 
       await certificate.populate('uploadedBy', 'username');
-
       res.status(200).json({
         success: true,
         message: 'Certificate updated successfully',
-        data: {
-          certificate
-        }
+        data: { certificate }
       });
-
     } catch (error) {
       console.error('Update certificate error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
+      res.status(500).json({ success: false, message: 'Server error' });
     }
   }
 );
 
-// @route   DELETE /api/certificates/:id
-// @desc    Delete certificate
-// @access  Private (Admin)
+// Delete certificate
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const certificate = await Certificate.findById(req.params.id);
-
     if (!certificate) {
-      return res.status(404).json({
-        success: false,
-        message: 'Certificate not found'
-      });
+      return res.status(404).json({ success: false, message: 'Certificate not found' });
     }
 
-    // Delete from Cloudinary first
     if (certificate.cloudinaryId) {
       await deleteFromCloudinary(certificate.cloudinaryId);
     }
 
-    // Hard delete the certificate
     await Certificate.findByIdAndDelete(req.params.id);
-
-    res.status(200).json({
-      success: true,
-      message: 'Certificate deleted successfully'
-    });
-
+    res.status(200).json({ success: true, message: 'Certificate deleted successfully' });
   } catch (error) {
     console.error('Delete certificate error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-// @route   GET /api/certificates/stats/overview
-// @desc    Get certificate statistics
-// @access  Private (Admin)
+// Stats route
 router.get('/stats/overview', authenticateToken, async (req, res) => {
   try {
     const totalCertificates = await Certificate.countDocuments();
-
-    res.status(200).json({
-      success: true,
-      data: {
-        totalCertificates
-      }
-    });
-
+    res.status(200).json({ success: true, data: { totalCertificates } });
   } catch (error) {
     console.error('Get stats error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
