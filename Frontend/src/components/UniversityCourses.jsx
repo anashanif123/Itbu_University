@@ -23,6 +23,8 @@ const universityCourses = [
   { name: "Data science", duration: "2/4 Years" },
   { name: "MBA ", duration: "1.5 Years" },
   { name: "Civil engineering ", duration: "3 Years" },
+  { name: "English language/Business language" },
+  
 ];
 
 export default function UniversityCoursesSection() {
