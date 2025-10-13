@@ -12,6 +12,8 @@ const coachingCourses = [
   { name: "Electrical Diploma", description: "Learn practical and theoretical electrical systems." },
   { name: "Electronic Diploma", description: "Understand circuits, devices and electronics fundamentals." },
   { name: "Robotics & Artificial Intelligence", description: "Future-ready skills in robotics & AI technologies." },
+  { name: "English language/Business language", },
+  
 ];
 
 export default function CoachingCoursesSection() {
