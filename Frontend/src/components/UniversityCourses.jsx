@@ -25,6 +25,7 @@ const universityCourses = [
   { name: "Civil engineering ", duration: "3 Years" },
   { name: "English language/Business language" },
   { name: "Bio medical"},
+  { name: "Teaching diploma certificate"},
 ];
 
 export default function UniversityCoursesSection() {
